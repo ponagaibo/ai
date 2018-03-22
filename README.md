@@ -1,5 +1,6 @@
 # ai
 Для файла "challenge_dataset.csv":
+
     import quandl
     import pandas as pd
     from sklearn.linear_model import LinearRegression
@@ -21,4 +22,4 @@
     plt.show()
     
     
-!(https://sun1-5.userapi.com/c830608/v830608771/bb309/0qu3Gqc_uSg.jpg ch_dataset)
+![](https://sun1-5.userapi.com/c830608/v830608771/bb309/0qu3Gqc_uSg.jpg)
