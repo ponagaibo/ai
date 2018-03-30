@@ -37,7 +37,6 @@ plt.figure()
 plt.xlabel('Open')
 plt.ylabel('Close')
 plt.plot(X, y, 'k.')
-
 model.fit(X, y)
 plt.plot(X, model.predict(X), color='g')
 plt.show()
