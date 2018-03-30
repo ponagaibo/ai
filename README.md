@@ -146,3 +146,28 @@
 всего линейная регрессия отображена на третьем графике, но для ее построения пришлось
 пожертвовать слишком большим количеством данных. Если столбец "Per Capita" не очень
 важен, то лучше удалить его, чем большую часть данных.
+
+## Для файла "GOOGL.csv":
+
+Построим линейную регрессию столбца 'Close' от столбца 'Open':
+    plt.figure()
+    plt.xlabel('Open')
+    plt.ylabel('Close')
+    plt.plot(X, y, 'k.')
+    model.fit(X, y)
+    plt.plot(X, model.predict(X), color='g')
+    plt.show()
+
+Интуитивно понятно, что их значения тесно связаны и один из столбцов может описывать другой. 
+Полученный график:
+![](https://sun9-9.userapi.com/c824701/v824701635/f431a/dy3J-elqKO4.jpg)
+Теперь разделим данные на тренировочные и тестовые:
+
+    X_train, X_test, y_train, y_test = cross_validation.train_test_split(X, y, test_size=0.2)
+    model = LinearRegression()
+    model.fit(X_train, y_train)
+    print("R-squared: ")
+    print(model.score(X_test, y_test))
+
+Значение "R-squared" показывает, насколько хорошо модель объясняет данные. В данном случае выдается значение 
+около 0.85, что означает, что модель близка к переобучению.
