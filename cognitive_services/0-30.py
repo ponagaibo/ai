@@ -87,10 +87,11 @@ def drawTagStats(tag_to_draw):
     ax.bar(1 + 2 * width, int(amounts[2]), width=width, color='green')
     ax.bar(1 + 3 * width, int(amounts[3]), width=width, color='pink')
     ax.bar(1 + 4 * width, int(amounts[4]), width=width, color='orange')
+
     ax.set_ylabel('Amount of tags in age range')
     ax.set_title('Tag: ' + tag_to_draw)
     ax.set_xticks(np.add(x, (width / 2)))
-    ax.set_xticklabels(('0-17', '18-21', '22-25', '26-29', '30+'))
+    ax.set_xticklabels(('0-10', '10-13', '13-18', '18-30', '30+'))
     ax.text(1, 1.05 * int(amounts[0]),
             '%d' % int(amounts[0]), ha='center', va='bottom')
     ax.text(2, 1.05 * int(amounts[1]),
@@ -138,35 +139,51 @@ def analyze(id):
         print(error_msg)
         return
     vk = vk_session.get_api()
+
     friends_id = vk.friends.get(user_id=id)["items"]
+    cnt_of_friends = 0
     for friend_id in friends_id:
+        if cnt_of_friends % 5 == 0:
+            print("Already " + str(cnt_of_friends) + " friends")
+        cnt_of_friends = cnt_of_friends + 1
         age = doInclude(vk, friend_id)
         if age == -1:
+            #print("pass")
             continue
-        if age >= 0 and age < 18:
+        # data_file.write(str(friend_id) + "\n")
+        # data_file.write(str(age) + "\n")
+        if age >= 0 and age < 10:
+            #print("my map is 0-10")
             map = map_0_10
-        elif age >= 18 and age < 22:
+        elif age >= 10 and age < 13:
+            #print("my map is 10-13")
             map = map_10_13
-        elif age >= 22 and age < 26:
+        elif age >= 13 and age < 18:
+            #print("my map is 13-18")
             map = map_13_18
-        elif age >= 26 and age < 30:
+        elif age >= 18 and age < 30:
+            #print("my map is 18-30")
             map = map_18_30
         else:
+            #print("my map is 30+")
             map = map_30
         photos = getLastPhotos(vk, friend_id, 25)
         for photo in photos:
             try:
                 image_url = photo["photo_604"]
+                # print(image_url)
                 data = {'url': image_url}
                 response = requests.post(vision_analyze_url, headers=headers, params=params, json=data)
                 response.raise_for_status()
                 analysis = response.json()
                 image_caption = analysis["description"]["tags"]
+
                 for tag in image_caption:
                     if not tag in main_map:
                         main_map[tag] = 1
                     else:
                         main_map[tag] += 1
+
                     if not tag in map:
                         map[tag] = 1
                     else:
@@ -174,6 +191,9 @@ def analyze(id):
             except Exception as err:
                 print(err)
                 continue
+        #print(map)
+        # if cnt_of_friends > 15:
+        #     break
     data_file.write("0-10\n")
     writeStatsOfRange(map_0_10, data_file)
     data_file.write("10-13\n")
